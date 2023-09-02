@@ -37,11 +37,9 @@ namespace FittingsJoiner
                         {
                             TaskDialog.Show("Ошибка", "второй элемент должен иметь хотя бы один открытый соединитель");
                         }
-                        //TaskDialog.Show("1", connectors[0].Origin.ToString() + Environment.NewLine + connectors[1].Origin.ToString());
                         XYZ translation = connectors[1].Origin - connectors[0].Origin;
                         XYZ forRotation = new XYZ(0,0,1);
                         double angle = Math.PI - CalculateAngle(connectors);
-                        //TaskDialog.Show("1", (angle * 180 / Math.PI).ToString());
                         Line line = Line.CreateBound(connectors[0].Origin+ new XYZ(0, 0, 1), connectors[0].Origin); // + new XYZ(0, 0, 1)
 
                         using (Transaction t = new Transaction(doc, "Соединение фитингов"))
@@ -51,8 +49,7 @@ namespace FittingsJoiner
                             XYZ pointToOrient = connectors[1].CoordinateSystem.BasisZ;
                             XYZ pointToMove = connectors[0].CoordinateSystem.BasisZ;
                             if ((pointToOrient + pointToMove).IsZeroLength() == false)
-                            {
-                                //angle = Math.PI +2* CalculateAngle(connectors);
+                            {                               
                                 ElementTransformUtils.RotateElement(doc, elementToMove.Id, line, -2*angle);
                             }
 
@@ -136,11 +133,8 @@ namespace FittingsJoiner
             Connector c2 = connectors[1];
             
             XYZ pointToOrient = connectors[1].CoordinateSystem.BasisZ;
-            XYZ pointToMove = connectors[0].CoordinateSystem.BasisZ;            
-            
-            //Transform t = new Transform(connectors[0].CoordinateSystem);
-            //Line line = Line.CreateBound(connectors[0].Origin + new XYZ(0, 0, 1), connectors[0].Origin);
-            //t.Crea
+            XYZ pointToMove = connectors[0].CoordinateSystem.BasisZ;     
+           
             
             double result = pointToOrient.AngleTo(pointToMove);
             return result;
