@@ -21,9 +21,9 @@ namespace FittingsJoiner
 
         public static void JoinFittings()
         {
-            using (TransactionGroup trg = new TransactionGroup(doc, "Соединение фитингов"))
+            using (TransactionGroup transactionGroup = new TransactionGroup(doc, "Соединение фитингов"))
             {
-                trg.Start();
+                transactionGroup.Start();
                 try
                 {
                     while (true)
@@ -42,9 +42,9 @@ namespace FittingsJoiner
                         double angle = Math.PI - CalculateAngle(connectors);
                         Line line = Line.CreateBound(connectors[0].Origin+ new XYZ(0, 0, 1), connectors[0].Origin); // + new XYZ(0, 0, 1)
 
-                        using (Transaction t = new Transaction(doc, "Соединение фитингов"))
+                        using (Transaction transaction = new Transaction(doc, "Соединение фитингов"))
                         {
-                            t.Start();
+                            transaction.Start();
                             ElementTransformUtils.RotateElement(doc, elementToMove.Id, line, angle);
                             XYZ pointToOrient = connectors[1].CoordinateSystem.BasisZ;
                             XYZ pointToMove = connectors[0].CoordinateSystem.BasisZ;
@@ -55,13 +55,13 @@ namespace FittingsJoiner
 
                             ElementTransformUtils.MoveElement(doc, elementToMove.Id, translation);
                             connectors[0].ConnectTo(connectors[1]);
-                            t.Commit();
+                            transaction.Commit();
                         }
                     }
                 }
-                catch (Exception )
+                catch (OperationCanceledException )
                 {
-                    trg.Assimilate();
+                    transactionGroup.Assimilate();
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace FittingsJoiner
                     connectors[0] = c;
                 }
             }
-            distance = 20;
+            distance = 20; //we should make it less
             foreach (Connector c in connectorsOfSecond)
             {
                 if (distance > c.Origin.DistanceTo(clickPoint2))
